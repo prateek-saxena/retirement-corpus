@@ -1,35 +1,175 @@
 <!DOCTYPE html>
+
+
+
+
+
 <html>
-<body>
 
-<form id="frm1" >
-  When do you want to retire: <input type="text" name="retire_month" value=""><br>
-  What's your monthyl expense: <input type="text" name="current_expense" value=""><br>
-  Expected return rate: <input type="text" name="return_rate" value=""><br>
-</form> 
+<style>
+.input_label,.output_label
+{
+    background: #000000;
+    height: 100px;
+    font-family: monospace;
+    color: #ffffffe0;
+    font-weight: 100;
+    font-size: 20px;
+	width:50%;
+	text-align: center;
+}
 
-<p>Click "Try it" to display the value of each element in the form.</p>
+.input_text
+{
+    background: #rr00ff;
+    font-family: monospace;
+	text-align-last: center;
+}
 
-<button onclick="myFunction()">Try it</button>
+.output_text
+{
+    background: #rr00ff;
+    font-family: monospace;
+	text-align-last: center;
+	font-size:50px;
+}
+
+.main
+{
+width:100%;
+}
+
+.input
+{
+width:40%;
+}
+
+.btn
+{
+width:10%;
+text-align: center;
+}
+
+.output
+{
+width:40%;
+}
 
 
-<table border="1">
-	<tr>
-		<td>Monthly expense becomes: </td>
-		<td id="projected_expense"></td>
-	</tr>
-	<tr>
-		<td>Corpus needed: </td>
-		<td id="corpus"></td>
-	</tr>
-	<tr>
-		<td>EMI: </td>
-		<td id="emi"></td>
-	</tr>
+.input [type="text"]
+{
+    height: 85px;
+    width: 167px;
+    padding: 0px;
+    border-color: transparent;
+	font-size:40px;
+}
 
+.heading
+{
+    font-size: 60px;
+    text-align-last: center;
+    padding: 10px;
+}
+
+.assumptions
+{
+    text-align: center;
+    font-family: monospace;
+    text-shadow: 0 0 black;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-style: italic;
+    font-weight: 200;
+    padding: 15px;
+}
+
+.footer
+{
+    text-align: center;
+    font-family: monospace;
+    text-shadow: 0 0 black;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 200;
+    padding: 15px;
+}
+
+.button {
+  background-color: #8a868;
+  border: none;
+  color: #2b2828;
+  padding: 9px 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+.button1:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+::placeholder 
+{
+  color: grey;
+  opacity: 0.5;
+}
+</style>
+
+
+<body style="border:5px solid;border-color: burlywood;">
+
+<table style="padding-left:100px;">
+	<p class="heading">Plan your retirement!</p>
+<tr class="main">
+<td class="input">
+	<form id="frm1">
+	<table border="1" class="input_form">
+		<tr>
+			<td class="input_label">When do you want to retire (in years)</td>
+			<td class="input_text"><input type="text" name="retire_month" value="" placeholder="20" required></td>
+		</tr>
+		<tr>
+			<td class="input_label">What's your monthly expense?</td>
+			<td class="input_text"><input type="text" name="current_expense" value="" placeholder="100000" required></td>
+		</tr>
+		<tr>
+			<td class="input_label">Expected return rate (enter number)</td>
+			<td class="input_text"><input type="text" name="return_rate" value="" placeholder="12" required></td>
+		</tr>
+	</table>
+	</form> 
+</td>
+
+<td class="btn">
+	<button onclick="myFunction()" class="button button1">Do the magic</button>
+</td>
+
+<td class="output">
+	<table border="1">
+		<tr>
+			<td class="output_label">Monthly expense becomes: </td>
+			<td class="output_text" id="projected_expense"></td>
+		</tr>
+		<tr>
+			<td class="output_label">Corpus needed: </td>
+			<td class="output_text" id="corpus"></td>
+		</tr>
+		<tr>
+			<td class="output_label">EMI: </td>
+			<td class="output_text" id="emi"></td>
+		</tr>
+	</table>
+</td>
+</tr>
 </table>
-
-
+<div id="assumptions" class="assumptions"></div>
+<div class="footer">developed by PRATEEK SAXENA <br> <a href="https://www.linkedin.com/in/prateek-saxena-b004023b/">Linkedin</a> </div>
 <script>
 function myFunction() {
   var x = document.getElementById("frm1");
@@ -38,17 +178,25 @@ function myFunction() {
   var b = x.elements["current_expense"].value;
   var c = x.elements["return_rate"].value;
   var inflation = 6;
-  var fd = 5;
+  var fd = 5.5;
   
-  var p_exp = b*(1+inflation/100)**a;
-  var corp = (p_exp*12)/(fd/100);
-  var emi_c = (corp*c/1200)/(((1+c/1200)**(a*12)-1)*(1+c/1200));
+  var p_exp = Math.round(b*(1+inflation/100)**a);
+  var corp = Math.round((p_exp*12)/(fd/100));
+  var emi_c = Math.round((corp*c/1200)/(((1+c/1200)**(a*12)-1)*(1+c/1200)));
+  
+  var str1 = "The calculation assumes the annual inflation rate as ";
+  var str2 = "%. It also assumes the annual return rate on corpus as ";
+  var str3 = "%.";
+  var concat = str1.concat(inflation,str2,fd,str3);
   
   document.getElementById("projected_expense").innerHTML = p_exp;
   document.getElementById("corpus").innerHTML = corp;
   document.getElementById("emi").innerHTML = emi_c;
+  document.getElementById("assumptions").innerHTML = concat;
+  
 }
 </script>
+
 
 </body>
 </html>
